@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Countdown – 6 Jan 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg: #050816;          /* dark navy like reference */
+      --card: #0c1020;
+      --text-main: #ffffff;
+      --text-muted: #9ca3af;
+      --radius-lg: 22px;
+      --shadow-card: 0 18px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 14px;
+      background: var(--bg);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 620px;
+      text-align: center;
+      padding: 24px 18px 34px;
+    }
+
+    .title {
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
+      font-weight: 600;
+      margin-bottom: 22px;
+    }
+
+    /* Image / GIF placeholder */
+    .media-placeholder {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto 28px;
+      /* Taller on mobile, more cinematic on desktop */
+      aspect-ratio: 4 / 5;
+      border-radius: 30px;
+      border: 2px dashed rgba(255, 255, 255, 0.18);
+      background: radial-gradient(circle at top, #111729 0, #050816 60%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .media-placeholder span {
+      opacity: 0.9;
+    }
+
+    /* Countdown layout */
+    .countdown-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr)); /* mobile: 2x2 */
+      gap: 14px;
+      justify-items: center;
+    }
+
+    .time-card {
+      width: 100%;
+      max-width: 150px;
+      background: linear-gradient(145deg, #0d1224, #050816);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      padding: 14px 10px 16px;
+    }
+
+    .time-value {
+      font-size: clamp(2.1rem, 6vw, 2.8rem);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      margin-bottom: 5px;
+    }
+
+    .time-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .expired {
+      margin-top: 22px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    /* Larger screens */
+    @media (min-width: 640px) {
+      body {
+        padding: 32px;
+      }
+
+      .container {
+        padding: 30px 26px 40px;
+      }
+
+      .media-placeholder {
+        aspect-ratio: 16 / 9;
+        margin-bottom: 34px;
+      }
+
+      .countdown-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr)); /* desktop: 1 row */
+        gap: 16px;
+      }
+
+      .time-card {
+        padding: 16px 14px 18px;
+      }
+
+      .time-label {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Countdown to 6 January 2026</h1>
+
+    <!-- Image / GIF placeholder -->
+    <!-- Replace this div content with <img src="your.gif" alt=""> when you have the file -->
+    <div class="media-placeholder">
+      <span>Image / GIF Placeholder</span>
+    </div>
+
+    <!-- Countdown -->
+    <div class="countdown-grid" id="countdown">
+      <div class="time-card">
+        <div class="time-value" id="days">00</div>
+        <div class="time-label">Days</div>
+      </div>
+      <div class="time-card">
+        <div class="time-value" id="hours">00</div>
+        <div class="time-label">Hours</div>
+      </div>
+      <div class="time-card">
+        <div class="time-value" id="minutes">00</div>
+        <div class="time-label">Minutes</div>
+      </div>
+      <div class="time-card">
+        <div class="time-value" id="seconds">00</div>
+        <div class="time-label">Seconds</div>
+      </div>
+    </div>
+
+    <div class="expired" id="expired" style="display:none;">
+      The countdown has finished.
+    </div>
+  </div>
+
+  <script>
+    // Target date: 6 January 2026, 00:00:00 (local)
+    const targetDate = new Date(2026, 0, 6, 0, 0, 0).getTime();
+
+    const daysEl = document.getElementById("days");
+    const hoursEl = document.getElementById("hours");
+    const minutesEl = document.getElementById("minutes");
+    const secondsEl = document.getElementById("seconds");
+    const expiredEl = document.getElementById("expired");
+
+    function pad(num) {
+      return num.toString().padStart(2, "0");
+    }
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        daysEl.textContent = "00";
+        hoursEl.textContent = "00";
+        minutesEl.textContent = "00";
+        secondsEl.textContent = "00";
+        expiredEl.style.display = "block";
+        clearInterval(timer);
+        return;
+      }
+
+      const secondsTotal = Math.floor(diff / 1000);
+      const days = Math.floor(secondsTotal / (60 * 60 * 24));
+      const hours = Math.floor((secondsTotal % (60 * 60 * 24)) / (60 * 60));
+      const minutes = Math.floor((secondsTotal % (60 * 60)) / 60);
+      const seconds = secondsTotal % 60;
+
+      daysEl.textContent = pad(days);
+      hoursEl.textContent = pad(hours);
+      minutesEl.textContent = pad(minutes);
+      secondsEl.textContent = pad(seconds);
+    }
+
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
