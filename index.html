@@ -160,49 +160,62 @@
     </div>
   </div>
 
-  <script>
-    /**
-     * Target time: 2026-01-05 08:00 in Budapest (CET).
-     * We compute it as 07:00 UTC, since Budapest is CET (UTC+1) in January.
-     */
-    const targetUtcMs = Date.UTC(2026, 0, 5, 7, 0, 0); // Jan=0
+<script>
+  const targetUtcMs = Date.UTC(2026, 0, 5, 7, 0, 0);
 
-    const daysEl = document.getElementById("days");
-    const hoursEl = document.getElementById("hours");
-    const minutesEl = document.getElementById("minutes");
-    const secondsEl = document.getElementById("seconds");
-    const expiredEl = document.getElementById("expired");
+  const daysEl = document.getElementById("days");
+  const hoursEl = document.getElementById("hours");
+  const minutesEl = document.getElementById("minutes");
+  const secondsEl = document.getElementById("seconds");
+  const expiredEl = document.getElementById("expired");
 
-    function pad(num) { return num.toString().padStart(2, "0"); }
+  const titleEl = document.getElementById("title");
+  const gifEl = document.getElementById("mainGif");
+  const countdownEl = document.getElementById("countdown");
 
-    function updateCountdown() {
-      const now = Date.now();
-      const diff = targetUtcMs - now;
+  function pad(num) {
+    return num.toString().padStart(2, "0");
+  }
 
-      if (diff <= 0) {
-        daysEl.textContent = "00";
-        hoursEl.textContent = "00";
-        minutesEl.textContent = "00";
-        secondsEl.textContent = "00";
-        expiredEl.style.display = "block";
-        clearInterval(timer);
-        return;
-      }
+  function updateCountdown() {
+    const now = Date.now();
+    const diff = targetUtcMs - now;
 
-      const total = Math.floor(diff / 1000);
-      const days = Math.floor(total / 86400);
-      const hours = Math.floor((total % 86400) / 3600);
-      const minutes = Math.floor((total % 3600) / 60);
-      const seconds = total % 60;
+    if (diff <= 0) {
+      // nullázás
+      daysEl.textContent = "00";
+      hoursEl.textContent = "00";
+      minutesEl.textContent = "00";
+      secondsEl.textContent = "00";
 
-      daysEl.textContent = pad(days);
-      hoursEl.textContent = pad(hours);
-      minutesEl.textContent = pad(minutes);
-      secondsEl.textContent = pad(seconds);
+      // SZÖVEG CSERE
+      titleEl.textContent = "Hát elkezdődött";
+
+      // GIF CSERE
+      gifEl.src = "after.gif"; // <-- új gif fájl neve
+
+      // countdown elrejtése (opcionális)
+      countdownEl.style.display = "none";
+
+      // extra szöveg elrejtése (opcionális)
+      expiredEl.style.display = "none";
+
+      clearInterval(timer);
+      return;
     }
 
-    updateCountdown();
-    const timer = setInterval(updateCountdown, 1000);
-  </script>
-</body>
-</html>
+    const total = Math.floor(diff / 1000);
+    const days = Math.floor(total / 86400);
+    const hours = Math.floor((total % 86400) / 3600);
+    const minutes = Math.floor((total % 3600) / 60);
+    const seconds = total % 60;
+
+    daysEl.textContent = pad(days);
+    hoursEl.textContent = pad(hours);
+    minutesEl.textContent = pad(minutes);
+    secondsEl.textContent = pad(seconds);
+  }
+
+  updateCountdown();
+  const timer = setInterval(updateCountdown, 1000);
+</script>
